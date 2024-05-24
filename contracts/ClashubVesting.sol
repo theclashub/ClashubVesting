@@ -77,19 +77,23 @@ contract ClashubVesting {
     }
 
     modifier onlyApproved(uint256 _functionID) {
-        bool checkOwner;
         uint256 approved=0;
         uint256 _OwnerCount = OwnerCount;   
-        for (uint i=0; i<_OwnerCount; i++) 
+        for (uint256 i=0; i<_OwnerCount; i++) 
         {
             if (ApprovalOf[_functionID][Owners[i]]){
                 approved++;
             }
         }
-        if (InitPriv) approved=_OwnerCount;     
+        if (InitPriv) {approved=_OwnerCount;} 
         require(approved>=MinApproved,"Function not approved");
         _;
-    } 
+        // delete approved
+        for (uint256 i=0; i<_OwnerCount; i++) 
+        {
+            ApprovalOf[_functionID][Owners[i]]=false;
+        }
+    }
 
 
     constructor(address _tokenAddress, address[] memory _owners ) {
